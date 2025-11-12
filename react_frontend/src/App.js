@@ -3,6 +3,10 @@ import logo from './logo.svg';
 import './App.css';
 import { env } from './config/env';
 
+/**
+ * Demo landing header for theme toggle.
+ * Note: Actual pages/routes are rendered by src/router.jsx.
+ */
 // PUBLIC_INTERFACE
 function App() {
   const [theme, setTheme] = useState('light');
