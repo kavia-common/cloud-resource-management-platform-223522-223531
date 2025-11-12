@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import logo from './logo.svg';
 import './App.css';
 import { env } from './config/env';
+import { useUIStore } from './store/useUIStore';
 
 /**
  * Demo landing header for theme toggle.
@@ -9,7 +10,8 @@ import { env } from './config/env';
  */
 // PUBLIC_INTERFACE
 function App() {
-  const [theme, setTheme] = useState('light');
+  const theme = useUIStore((s) => s.theme);
+  const setTheme = useUIStore((s) => s.setTheme);
 
   // Effect to apply theme to document element
   useEffect(() => {
@@ -18,7 +20,7 @@ function App() {
 
   // PUBLIC_INTERFACE
   const toggleTheme = () => {
-    setTheme(prevTheme => prevTheme === 'light' ? 'dark' : 'light');
+    setTheme(theme === 'light' ? 'dark' : 'light');
   };
 
   return (

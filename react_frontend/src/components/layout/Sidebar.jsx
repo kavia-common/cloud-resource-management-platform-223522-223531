@@ -1,11 +1,13 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
+import { useUIStore } from '../../store/useUIStore';
 
 /**
  * Collapsible sidebar for main navigation.
  */
 export default function Sidebar() {
-  const [collapsed, setCollapsed] = React.useState(false);
+  const collapsed = useUIStore((s) => s.sidebarCollapsed);
+  const toggleSidebar = useUIStore((s) => s.toggleSidebar);
 
   return (
     <aside
@@ -23,7 +25,7 @@ export default function Sidebar() {
       <div style={{ display: 'flex', justifyContent: collapsed ? 'center' : 'flex-end', padding: 8 }}>
         <button
           type="button"
-          onClick={() => setCollapsed((c) => !c)}
+          onClick={toggleSidebar}
           aria-label={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
           style={{
             border: '1px solid #e5e7eb',
