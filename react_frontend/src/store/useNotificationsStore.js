@@ -35,4 +35,40 @@ export const useNotificationsStore = create((set, get) => ({
       logger.warn('Failed to mark notification as read', { id, error: String(e?.message || e) });
     }
   },
+
+  // PUBLIC_INTERFACE
+  /**
+   * Apply realtime inserted notifications (prepend).
+   * @param {Array<any>} rows
+   */
+  onRealtimeInsert: (rows = []) => {
+    if (!Array.isArray(rows) || rows.length === 0) return;
+    const { items } = get();
+    const map = new Map();
+    [...rows, ...items].forEach((n) => map.set(n.id, n));
+    const next = Array.from(map.values());
+    set({ items: next, unreadCount: next.filter((n) => !n.read).length });
+  },
+
+  // PUBLIC_INTERFACE
+  /**
+   * Apply realtime update for a single notification.
+   * @param {any} row
+   */
+  onRealtimeUpdate: (row) => {
+    if (!row || typeof row.id === 'undefined') return;
+    const updated = get().items.map((n) => (n.id === row.id ? { ...n, ...row } : n));
+    set({ items: updated, unreadCount: updated.filter((n) => !n.read).length });
+  },
+
+  // PUBLIC_INTERFACE
+  /**
+   * Apply realtime delete for a single notification.
+   * @param {any} row
+   */
+  onRealtimeDelete: (row) => {
+    if (!row || typeof row.id === 'undefined') return;
+    const next = get().items.filter((n) => n.id !== row.id);
+    set({ items: next, unreadCount: next.filter((n) => !n.read).length });
+  },
 }));

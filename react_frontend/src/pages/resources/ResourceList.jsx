@@ -2,6 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { useResourcesStore } from '../../store/useResourcesStore';
 import Loader from '../../components/common/Loader';
+import { useResourcesRealtime } from '../../hooks/useRealtime';
 
 /**
  * PUBLIC_INTERFACE
@@ -24,6 +25,15 @@ export default function ResourceList() {
     fetchList();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [query, provider, page, pageSize]);
+
+  // Realtime: subscribe to resources changes matching current provider filter
+  const { onRealtimeInsert, onRealtimeUpdate, onRealtimeDelete } = useResourcesStore.getState();
+  useResourcesRealtime({
+    onInsert: onRealtimeInsert,
+    onUpdate: onRealtimeUpdate,
+    onDelete: onRealtimeDelete,
+    filter: provider === 'all' ? undefined : `provider=eq.${provider}`,
+  });
 
   const totalPages = Math.max(1, Math.ceil((total || 0) / pageSize));
 
