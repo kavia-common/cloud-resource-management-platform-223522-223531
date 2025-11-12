@@ -1,4 +1,4 @@
-import React, { Suspense, lazy, useMemo } from 'react';
+import React, { Suspense, useMemo } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import MainLayout from './components/layout/MainLayout';
 import Loader from './components/common/Loader';
@@ -8,14 +8,15 @@ import { RoleGuard } from './components/auth/RoleGuard';
 import { env } from './config/env';
 import AuthRoutes from './pages/auth';
 
-/** Lazy-loaded placeholder app pages */
-const Dashboard = lazy(() => Promise.resolve({ default: () => <div>Dashboard</div> }));
-const Resources = lazy(() => Promise.resolve({ default: () => <div>Resources</div> }));
-const ResourceDetail = lazy(() => Promise.resolve({ default: () => <div>Resource Detail</div> }));
-const Monitoring = lazy(() => Promise.resolve({ default: () => <div>Monitoring</div> }));
-const Notifications = lazy(() => Promise.resolve({ default: () => <div>Notifications</div> }));
-const Billing = lazy(() => Promise.resolve({ default: () => <div>Billing</div> }));
-const Admin = lazy(() => Promise.resolve({ default: () => <div>Admin</div> }));
+// App pages
+import Dashboard from './pages/Dashboard';
+import ResourceList from './pages/resources/ResourceList';
+import ResourceCreate from './pages/resources/ResourceCreate';
+import ResourceDetail from './pages/resources/ResourceDetail';
+import Monitoring from './pages/Monitoring';
+import Notifications from './pages/Notifications';
+import Billing from './pages/Billing';
+import Admin from './pages/admin';
 
 /**
  * Compute health path based on environment variable with default.
@@ -52,11 +53,18 @@ export default function AppRouter() {
             }
           >
             <Route index element={<Dashboard />} />
-            <Route path="resources" element={<Resources />} />
+
+            {/* Resources */}
+            <Route path="resources" element={<ResourceList />} />
+            <Route path="resources/create" element={<ResourceCreate />} />
             <Route path="resources/:id" element={<ResourceDetail />} />
+
+            {/* Other main sections */}
             <Route path="monitoring" element={<Monitoring />} />
             <Route path="notifications" element={<Notifications />} />
             <Route path="billing" element={<Billing />} />
+
+            {/* Admin (role-restricted) */}
             <Route
               path="admin"
               element={
