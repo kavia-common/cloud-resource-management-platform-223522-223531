@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import logo from './logo.svg';
 import './App.css';
+import { env } from './config/env';
 
 // PUBLIC_INTERFACE
 function App() {
@@ -32,6 +33,9 @@ function App() {
         </p>
         <p>
           Current theme: <strong>{theme}</strong>
+        </p>
+        <p style={{ fontSize: '0.8rem', opacity: 0.8 }}>
+          Env: <code>{env.NODE_ENV}</code>
         </p>
         <a
           className="App-link"
