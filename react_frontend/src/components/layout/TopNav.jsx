@@ -1,7 +1,8 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import Badge from '../common/Badge';
 import Toast from '../common/Toast';
+import { useSupabaseAuth } from '../../hooks/useSupabaseAuth';
 
 /**
  * Top navigation bar component with primary accent colors.
@@ -9,6 +10,13 @@ import Toast from '../common/Toast';
  */
 export default function TopNav() {
   const [showToast, setShowToast] = React.useState(false);
+  const { user, signOut } = useSupabaseAuth();
+  const navigate = useNavigate();
+
+  const onSignOut = async () => {
+    await signOut();
+    navigate('/auth/sign-in');
+  };
 
   return (
     <header
@@ -71,9 +79,20 @@ export default function TopNav() {
           >
             Notify
           </button>
-          <Link to="/auth" style={{ ...buttonStyle, backgroundColor: '#06b6d4' }}>
-            Auth
-          </Link>
+          {user ? (
+            <>
+              <span title={user.email} style={{ color: '#111827' }}>
+                {user.email}
+              </span>
+              <button onClick={onSignOut} style={{ ...buttonStyle, backgroundColor: '#ef4444' }}>
+                Sign out
+              </button>
+            </>
+          ) : (
+            <Link to="/auth/sign-in" style={{ ...buttonStyle, backgroundColor: '#06b6d4' }}>
+              Sign in
+            </Link>
+          )}
         </div>
       </div>
       <Toast

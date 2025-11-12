@@ -2,6 +2,16 @@
 
 This project provides a minimal React template with a clean, modern UI and minimal dependencies.
 
+## Supabase Authentication
+
+- Configure environment variables in `.env` (see `.env.example`).
+- Auth routes available under `/auth/*`:
+  - `/auth/sign-in`, `/auth/sign-up`, `/auth/forgot-password`, `/auth/callback`
+- Use `useSupabaseAuth()` hook to access `user`, `session`, and actions (`signInWithPassword`, `signUpWithEmail`, `signOut`, etc.).
+- Route protection:
+  - `AuthGuard` (requires authenticated user)
+  - `RoleGuard` (requires allowed roles; reads from `user.app_metadata.role` or `user.user_metadata.role`)
+
 ## Features
 
 - **Lightweight**: No heavy UI frameworks - uses only vanilla CSS and React

@@ -1,40 +1,32 @@
 import React from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
-import { getCurrentSession } from '../../lib/supabaseClient';
+import { useSupabaseAuth } from '../../hooks/useSupabaseAuth';
 
 /**
- * Placeholder role resolution: tries user.app_metadata.role, else 'user'.
+ * PUBLIC_INTERFACE
+ * RoleGuard checks the current user's role from app_metadata or user_metadata.
  */
-async function resolveRole() {
-  const session = await getCurrentSession();
-  const role =
-    session?.user?.app_metadata?.role ||
-    session?.user?.user_metadata?.role ||
-    'user';
-  return String(role);
-}
-
-// PUBLIC_INTERFACE
 export function RoleGuard({ allow = ['user'], children }) {
   const location = useLocation();
-  const [role, setRole] = React.useState(null);
+  const { user, loading } = useSupabaseAuth();
 
-  React.useEffect(() => {
-    let mounted = true;
-    (async () => {
-      const r = await resolveRole();
-      if (mounted) setRole(r);
-    })();
-    return () => {
-      mounted = false;
-    };
-  }, []);
+  const role = React.useMemo(() => {
+    return (
+      user?.app_metadata?.role ||
+      user?.user_metadata?.role ||
+      'user'
+    );
+  }, [user]);
 
-  if (!role) {
+  if (loading) {
     return <div style={{ padding: 16 }}>Authorizing…</div>;
   }
 
-  if (!allow.includes(role)) {
+  if (!user) {
+    return <Navigate to="/auth/sign-in" replace state={{ from: location }} />;
+  }
+
+  if (!allow.includes(String(role))) {
     return <Navigate to="/" replace state={{ from: location, reason: 'forbidden' }} />;
   }
 
